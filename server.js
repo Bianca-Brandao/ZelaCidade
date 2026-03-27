@@ -44,7 +44,7 @@ app.get('/incidentes/:id', async (req, res) => {
 app.post('/incidentes', async (req, res) => {
     const { tipo_problema, localizacao, descricao, prioridade, nome_solicitante,
         data_registro, hora_registro } = req.body
-    
+
     const db = await criarBanco()
 
     await db.run(`INSERT INTO incidentes(tipo_problema, localizacao, descricao, prioridade, nome_solicitante,
@@ -52,4 +52,32 @@ app.post('/incidentes', async (req, res) => {
         data_registro, hora_registro])
 
     res.send(`Incidente novo resgistrado: ${tipo_problema} resgistrado na data ${data_registro} por ${nome_solicitante}`)
+});
+
+app.put("/incidentes/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const { descricao, prioridade, status_resolucao } = req.body;
+
+    const db = await criarBanco();
+
+    await db.run(`
+        UPDATE incidentes 
+        SET descricao = ?, prioridade = ?, status_resolucao = ? 
+        WHERE id = ?`, [descricao, prioridade, status_resolucao, id]
+    );
+
+    res.send(`O incidente de ${id} foi atualizada com sucesso`);
+});
+
+app.delete("/incidentes/:id", async (req, res) => {
+    const { id } = req.params;
+
+    const db = await criarBanco();
+
+    await db.run(`
+        DELETE FROM incidentes WHERE id = ?
+        `, [id]);
+
+    res.send(`O incidente de ${id} foi removido com sucesso`);
 });
