@@ -1,9 +1,13 @@
-const express = require('express')
-const { criarBanco } = require('./database')
+const express = require('express');
+const { criarBanco } = require('./database');
 
-const app = express()
+const cors = require('cors');
 
-app.use(express.json())
+const app = express();
+
+app.use(cors());
+
+app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send(`
@@ -15,11 +19,6 @@ app.get('/', (req, res) => {
 
         </body>
         `);
-});
-
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
 
 app.get('/incidentes', async (req, res) => {
@@ -80,4 +79,10 @@ app.delete("/incidentes/:id", async (req, res) => {
         `, [id]);
 
     res.send(`O incidente de ${id} foi removido com sucesso`);
+});
+
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
